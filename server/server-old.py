@@ -26,10 +26,8 @@ def index():
     if request.method == 'POST':
         data = base64.urlsafe_b64decode(request.form.get('game'))
         game_dec = game_decrypt(data, key, nonce)
-
         return base64.urlsafe_b64encode(game_dec)
-
     return "Apenas requisições POST são aceitas"
-
+    
 if __name__ == '__main__':
     app.run(debug=True)
