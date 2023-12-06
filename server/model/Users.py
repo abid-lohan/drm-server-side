@@ -1,8 +1,11 @@
-from flask import Flask, request
-import flask
-from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import create_engine, Column, Integer, String
 
-class Users(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(255), unique=True)
-    password = db.Column(db.String(255))
+Base = declarative_base()
+
+class Users(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True)
+    username = Column(String(255), unique=True)
+    password = Column(String(255))
