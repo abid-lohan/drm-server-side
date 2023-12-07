@@ -16,7 +16,6 @@ from sqlalchemy.ext.declarative import declarative_base
 dotenv_path = Path('../.env')
 load_dotenv(dotenv_path=dotenv_path)
 
-# Setup (TODO: Passar para outro arquivo depois)
 app = flask.Flask(__name__)
 engine = create_engine('sqlite:///development.db')
 session = sessionmaker(bind=engine)()
@@ -24,22 +23,9 @@ session = sessionmaker(bind=engine)()
 SECRET_KEY = os.getenv("SECRET_KEY")
 AES_KEY = os.getenv("AES_KEY")
 
-print(SECRET_KEY)
-
 key = b"zBVv#36y-AusKVQ6YnfG_NnZ"
 cipher = AES.new(key, AES.MODE_EAX)
 nonce = cipher.nonce
-
-# game_enc = open("fakegame.exe", "rb")
-# game_code = game_enc.read()
-# ciphertext, tag = cipher.encrypt_and_digest(game_code)
-# print("Game encriptado!")
-
-# TODO: Substituir com a nova função para ver se funciona o encriptar.
-
-# with open("fakegame_enc.exe", "wb") as game_dec:
-# 	game_dec.write(ciphertext)
-# 	print("Game encriptado salvo como \"fakegame_enc.exe\"")
 
 def game_decrypt(data, key, nonce):
 	cipher = AES.new(key, AES.MODE_EAX, nonce=nonce)
@@ -57,7 +43,7 @@ def index():
     return "Apenas requisições POST são aceitas"
 
 
-@app.route('/api', methods=['GET'])
+@app.route('/api/decrypt', methods=['GET'])
 def protected():
     token = request.headers.get('Authorization')
     if not token:
