@@ -12,6 +12,7 @@ from model.Users import Users
 from sqlalchemy import create_engine, Column, Integer, String, Table, MetaData
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+import json
 
 dotenv_path = Path('../.env')
 load_dotenv(dotenv_path=dotenv_path)
@@ -32,17 +33,6 @@ def game_decrypt(data, key, nonce):
 	plaintext = cipher.decrypt(data)
 	return plaintext
 
-@app.route('/api/crypt', methods=['POST'])
-def index():
-    if request.method == 'POST':
-        data = base64.urlsafe_b64decode(request.form.get('game'))
-        game_dec = game_decrypt(data, key, nonce)
-
-        return base64.urlsafe_b64encode(game_dec)
-
-    return "Apenas requisições POST são aceitas"
-
-
 @app.route('/api/decrypt', methods=['GET'])
 def protected():
     token = request.headers.get('Authorization')
@@ -53,18 +43,20 @@ def protected():
         token_value = token[7:]
         payload = jwt.decode(token_value, SECRET_KEY, algorithms=["HS256"])
         username = payload['username']
+        data = base64.urlsafe_b64decode(request.form.get('game'))
+        game_dec = game_decrypt(data, key, nonce)
 
-
-
-        return jsonify({"Success": f"Usuário {username} autenticado."}), 200
+        return base64.urlsafe_b64encode(game_dec)
     except Exception:
         # O token é inválido
         return jsonify({"error": "Autenticação inválida."}), 401
 
 @app.route("/api/authenticate", methods=["POST"])
 def authenticate():
-    username = request.json["username"]
-    password = request.json["password"]
+    data = request.data
+    json_data = json.loads(data)
+    username = json_data["username"]
+    password = json_data["password"]
     user = session.query(Users).filter_by(username=username).first()
     if user is None or user.password != password:
         return jsonify({"error": "Usuário ou senha inválidos."}), 401
