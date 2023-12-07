@@ -33,7 +33,7 @@ def game_decrypt(data, key, nonce):
 	plaintext = cipher.decrypt(data)
 	return plaintext
 
-@app.route('/api/decrypt', methods=['GET'])
+@app.route('/api/decrypt', methods=['POST'])
 def protected():
     token = request.headers.get('Authorization')
     if not token:

@@ -14,14 +14,14 @@ key = b"zBVv#36y-AusKVQ6YnfG_NnZ"
 cipher = AES.new(key, AES.MODE_EAX)
 nonce = cipher.nonce
 
-game_enc = open("dist/snake", "rb")
+game_enc = open("dist/snake.exe", "rb")
 game_code = game_enc.read()
 ciphertext, tag = cipher.encrypt_and_digest(game_code)
 print("Game encriptado!")
 
-with open("snake_enc", "wb") as game_dec:
+with open("snake_enc.exe", "wb") as game_dec:
 	game_dec.write(ciphertext)
-	print("Game encriptado salvo como \"snake_enc\"")
+	print("Game encriptado salvo como \"snake_enc.exe\"")
 
 def game_decrypt(data, key, nonce):
 	cipher = AES.new(key, AES.MODE_EAX, nonce=nonce)
@@ -95,7 +95,7 @@ class GameClient(tkinter.Frame):
 
     def insert_license(self):
         license = self.license_entry.get()
-        game_enc = open("snake_enc", "rb")
+        game_enc = open("snake_enc.exe", "rb")
         game_code = game_enc.read()
 
         headers = {
@@ -110,10 +110,10 @@ class GameClient(tkinter.Frame):
         game_code = base64.urlsafe_b64decode(response.text)
 
         # Salva arquivo (todo: mudar isso depois para executar diretamente)
-        with open("snake_dec", "wb") as game_rcv:
+        with open("snake_dec.exe", "wb") as game_rcv:
             game_rcv.write(game_code)
 
-        os.system("./snake_dec")
+        # os.system("./snake_dec.exe")
 
         # Verifica se a chave de ativação está vazia
         if license == "":
